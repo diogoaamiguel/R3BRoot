@@ -61,6 +61,8 @@ class R3BRpcPoint : public FairMCPoint
     Double_t GetYIn() const { return fY; }
     Double_t GetZIn() const { return fZ; }
     void PositionIn(TVector3& pos) { pos.SetXYZ(fX, fY, fZ); }
+    Double_t GetTime() const { return fTime; }
+    Double_t GetELoss() const { return fELoss; }
     void MomentumIn(TVector3& mom) { mom.SetXYZ(fPx, fPy, fPz); }
 
     /** Output to screen **/

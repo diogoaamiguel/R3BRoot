@@ -58,6 +58,8 @@ class R3BCalifaPoint : public FairMCPoint
     double GetYIn() const { return fY; }
     double GetZIn() const { return fZ; }
     void PositionIn(TVector3& pos) { pos.SetXYZ(fX, fY, fZ); }
+    Double_t GetTime() const { return fTime; }
+    Double_t GetELoss() const { return fELoss; }
 
   protected:
     int fCrystalId = 0; // Crystal index

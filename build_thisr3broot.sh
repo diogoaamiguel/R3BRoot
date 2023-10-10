@@ -21,4 +21,4 @@ mkdir -p -v ../build
 cd ../build
 cmake ../R3BRoot -DUSE_DIFFERENT_COMPILER=TRUE
 source config.sh
-make -j8
+make -j6

@@ -15,6 +15,7 @@
 #define R3BRPC_H 1
 
 #include "R3BDetector.h"
+#include "R3BDetectorList.h"
 #include "Rtypes.h"
 #include "TLorentzVector.h"
 
@@ -33,14 +34,20 @@ class R3BRpc : public R3BDetector
      *@param trans   position
      *@param rot     rotation
      */
-    R3BRpc(const TString& geoFile, const TGeoTranslation& trans, const TGeoRotation& rot = TGeoRotation());
+    R3BRpc(const TString& geoFile, 
+           DetectorId type = kRPC1,
+           const TGeoTranslation& trans = TGeoTranslation(), 
+           const TGeoRotation& rot = TGeoRotation(),
+           const TString& namedetId = "NULL");
 
     /** Standard constructor.
      *@param geoFile name of the ROOT geometry file
      *@param combi   position + rotation
      */
-    R3BRpc(const TString& geoFile, const TGeoCombiTrans& combi = TGeoCombiTrans());
-
+    R3BRpc(const TString& geoFile,
+           DetectorId type = kRPC1,
+           const TGeoCombiTrans& combi = TGeoCombiTrans(), 
+           const TString& namedetId = "NULL");
     /** Destructor **/
     virtual ~R3BRpc();
 
@@ -101,6 +108,8 @@ class R3BRpc : public R3BDetector
     Int_t fTrackPID;       //!  particle identification
     Int_t fVolumeID;       //!  volume id
     Int_t fStripID;        //!  strip id
+    DetectorId fDetId;
+    TString fNameDetId;
     TLorentzVector fPosIn; //!  position
     TLorentzVector fMomIn; //!  momentum
     Double32_t fTime;      //!  time

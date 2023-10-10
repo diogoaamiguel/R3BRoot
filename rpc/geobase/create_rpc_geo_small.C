@@ -18,50 +18,46 @@
 
 TGeoManager* gGeoMan = NULL;
 
+Double_t rescaling = 0.35;
+
 /** Detector parameters.*/
-Double_t det_xGlassPos = 150; //!  x-size of Active Glass plates
-Double_t det_yGlassPos = 120; //!  y-size of Active Glass plates
+Double_t det_xGlassPos = 150 * rescaling; //!  x-size of Active Glass plates
+Double_t det_yGlassPos = 120 * rescaling; //!  y-size of Active Glass plates
 Double_t det_zGlassPos = 0.1; //!  z-size of Active Glass plates
 
-Double_t det_xFreonSF6Pos = 150;  //!  x-size of gas gap
-Double_t det_yFreonSF6Pos = 120;  //!  y-size of gas gap
+Double_t det_xFreonSF6Pos = 150 * rescaling;  //!  x-size of gas gap
+Double_t det_yFreonSF6Pos = 120 * rescaling;  //!  y-size of gas gap
 Double_t det_zFreonSF6Pos = 0.03; //!  z-size of gas gap
 
-Double_t det_xStripPos = 154;   //!  x-size of Strip
-Double_t det_yStripPos = 2.9;   //!  y-size of Strip
+Double_t det_xStripPos = 154 * rescaling;   //!  x-size of Strip
+Double_t det_yStripPos = 2.9 * rescaling;   //!  y-size of Strip
 Double_t det_zStripPos = 0.003; //!  z-size of Strip
 
-Double_t det_latxPMMAPos = 1.5;  //!  x-size of PMMA box
-Double_t det_latyPMMAPos = 125;  //!  y-size of PMMA box
+Double_t det_latxPMMAPos = 1.5 * rescaling;  //!  x-size of PMMA box
+Double_t det_latyPMMAPos = 125 * rescaling;  //!  y-size of PMMA box
 Double_t det_latzPMMAPos = 0.88; //!  z-size of PMMA box
 
-Double_t det_frontdxPMMAPos = 155; //!  x-thickness of PMMA box
-Double_t det_frontdyPMMAPos = 125; //!  y-thickness of PMMA box
+Double_t det_frontdxPMMAPos = 155 * rescaling; //!  x-thickness of PMMA box
+Double_t det_frontdyPMMAPos = 125 * rescaling; //!  y-thickness of PMMA box
 Double_t det_frontdzPMMAPos = 0.1; //!  z-thickness of PMMA box
 
-Double_t det_topdxPMMAPos = 155;  //!  x-thickness of PMMA box
-Double_t det_topdyPMMAPos = 1.5;  //!  y-thickness of PMMA box
+Double_t det_topdxPMMAPos = 155 * rescaling;  //!  x-thickness of PMMA box
+Double_t det_topdyPMMAPos = 1.5 * rescaling;  //!  y-thickness of PMMA box
 Double_t det_topdzPMMAPos = 0.88; //!  z-thickness of PMMA box
 
-Double_t det_xFreonSF6Pos_2 = 0.5; //!  x-size of gas gap
-Double_t det_yFreonSF6Pos_2 = 0.5; //!  y-size of gas gap
+Double_t det_xFreonSF6Pos_2 = 0.5 * rescaling; //!  x-size of gas gap
+Double_t det_yFreonSF6Pos_2 = 0.5 * rescaling; //!  y-size of gas gap
 Double_t det_zFreonSF6Pos_2 = 0.8; //!  z-size of gas gap
 
-Double_t det_xFR4Pos = 157;  //!  x-size of FR4 box
-Double_t det_yFR4Pos = 125;  //!  y-size of FR4 box
+Double_t det_xFR4Pos = 157 * rescaling;  //!  x-size of FR4 box
+Double_t det_yFR4Pos = 125 * rescaling;  //!  y-size of FR4 box
 Double_t det_zFR4Pos = 0.15; //!  z-size of FR4 box
 
-Double_t det_xAlPos = 177; //!  x-size of Aluminium box
-Double_t det_yAlPos = 131; //!  y-size of Aluminium box
+Double_t det_xAlPos = 177 * rescaling; //!  x-size of Aluminium box
+Double_t det_yAlPos = 131 * rescaling; //!  y-size of Aluminium box
 Double_t det_zAlPos = 0.3; //!  z-size of Aluminium box
 
-// New addition helium box
-
-Double_t det_xHePos = 177; // x-size of helium box
-Double_t det_yHePos = 131; // y-size of helium box
-Double_t det_zHePos = 100; // z-size of helium box
-
-void create_rpc_geo(const TString geoTag = "v2022.12")
+void create_rpc_geo_small(const TString geoTag = "v2022.12")
 {
     // -------   Load media from media file   -----------------------------------
     FairGeoLoader* geoLoad = new FairGeoLoader("TGeo", "FairGeoLoader");
@@ -74,7 +70,7 @@ void create_rpc_geo(const TString geoTag = "v2022.12")
     // --------------------------------------------------------------------------
 
     // -------   Geometry file name (output)   ----------------------------------
-    TString geoFileName = geoPath + "/geometry/tof_rpc_";
+    TString geoFileName = geoPath + "/geometry/tof_rpc_small_";
     geoFileName = geoFileName + geoTag + ".geo.root";
     // --------------------------------------------------------------------------
 
@@ -146,27 +142,7 @@ void create_rpc_geo(const TString geoTag = "v2022.12")
     if (!pMed7)
         Fatal("Main", "Medium vacuum not found");
 
-    // Box addition
-    // Helium
-    FairGeoMedium* Helium = geoMedia->getMedium("helium");
-    if (!Helium)
-        Fatal("Main", "Medium helium not found");
-    geoBuild->createMedium(Helium);
-    TGeoMedium* pMed8 = gGeoMan->GetMedium("helium");
-    if (!pMed8)
-        Fatal("Main", "Medium helium not found");
-
-    // Lead-Tungstenium PbWo
-    FairGeoMedium* PbWO = geoMedia->getMedium("PbWO");
-    if (!PbWO)
-        Fatal("Main", "Medium PbWO not found");
-    geoBuild->createMedium(PbWO);
-    TGeoMedium* pMed9 = gGeoMan->GetMedium("PbWO");
-    if (!pMed9)
-        Fatal("Main", "Medium PbWO not found");
-
-
-    // 
+ 
     // --------------------------------------------------------------------------
 
     // --------------   Create geometry and top volume  -------------------------
@@ -190,7 +166,7 @@ void create_rpc_geo(const TString geoTag = "v2022.12")
 
     // Definition of the mother volume where the RPC voulumes are going to be
     // mounted
-    TGeoVolume* Rpc_module = gGeoManager->MakeBox("RPC", pMed0, xbox / 2.0, ybox / 2.0, zbox / 2.0);
+    TGeoVolume* Rpc_module = gGeoManager->MakeBox("RPC_Small", pMed0, xbox / 2.0, ybox / 2.0, zbox / 2.0);
     // Rpc_module->SetLineColor(kRed);
 
     // Global positioning
@@ -232,45 +208,10 @@ void create_rpc_geo(const TString geoTag = "v2022.12")
         gGeoManager->MakeBox("strip", pMed3, (det_xStripPos) / 2.0, (det_yStripPos) / 2.0, det_zStripPos / 2.0);
     vol_strip->SetLineColor(42);
 
-    // Volume diogo additions
-    // Helium
-
-    TGeoVolume* vol_He =
-        gGeoManager->MakeBox("helium_box", pMed8, (det_xHePos) / 2.0, (det_yHePos) / 2.0, det_zHePos / 2.0);
-    vol_He->SetLineColor(kWhite);
-    
-    // PbWo
-
-    TGeoVolume* vol_PbWo =
-        gGeoManager->MakeBox("lead_box", pMed9, (det_xHePos) / 2.0, (det_yHePos) / 2.0, det_zHePos / 2.0);
-    vol_PbWo->SetLineColor(kBlack);
-    
-    // Vacuum
-
-    TGeoVolume* vol_vac =
-        gGeoManager->MakeBox("vacuum_box", pMed7, (det_xHePos) / 2.0, (det_yHePos) / 2.0, det_zHePos / 2.0);
-    vol_vac->SetLineColor(kGreen);
-
-    // Air
-
-    TGeoVolume* vol_air =
-        gGeoManager->MakeBox("vacuum_box", pMed0, (det_xHePos) / 2.0, (det_yHePos) / 2.0, det_zHePos / 2.0);
-    vol_air->SetLineColor(kGreen);
-
     // join everything
 
     // add FR4
     double z = 0;
-    
-    // Helium Box
-    // Rpc_module->AddNode(vol_He, 1, new TGeoTranslation(0, 0, -(det_zHePos/ 2.0)));
-    // End Of Helium Box
-    // Vacumm Box
-    // Rpc_module->AddNode(vol_vac, 1, new TGeoTranslation(0, 0, -(det_zHePos / 2.0)));
-    // End Of vacuum Box
-    // Air Box
-    // Rpc_module->AddNode(vol_air, 1, new TGeoTranslation(0, 0, -(det_zHePos / 2.0)));
-    // End Of Air Box
 
     Rpc_module->AddNode(vol_al_F, 1, new TGeoTranslation(0, 0, (det_zAlPos / 2.0)));
     Rpc_module->AddNode(vol_FR4, 2, new TGeoTranslation(0, 0, det_zAlPos + (det_zFR4Pos / 2.0)));
@@ -307,7 +248,7 @@ void create_rpc_geo(const TString geoTag = "v2022.12")
 
     Rpc_module->AddNode(vol_FR4, i, new TGeoTranslation(0, 0, (det_zFR4Pos / 2.0) + z));
 
-    for (j = 1; j <= 40; j++)
+    for (j = 1; j <= 38; j++)
     {
         i++;
         Rpc_module->AddNode(
@@ -353,12 +294,6 @@ void create_rpc_geo(const TString geoTag = "v2022.12")
     // add pmma and aluminium outer parts
     Rpc_module->AddNode(vol_al_F, 1, new TGeoTranslation(0, 0, (det_zAlPos / 2.0)));
 
-
-    // This is just to add the helium box after the RPC
-    
-    // zRpc_module->AddNode(vol_He, 1, new TGeoTranslation(0, 0, z + det_zFR4Pos + det_zAlPos + (det_zHePos / 2)));
-    
-    // Rpc_module->AddNode(vol_PbWo, 1, new TGeoTranslation(0, 0, 2 * det_zFR4Pos + ((25*z + det_frontdzPMMAPos + 0.2065)/ 2.0)));
 
     // ---------------   Finish   -----------------------------------------------
     gGeoMan->CloseGeometry();

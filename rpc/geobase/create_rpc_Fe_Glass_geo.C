@@ -21,7 +21,7 @@ TGeoManager* gGeoMan = NULL;
 /** Detector parameters.*/
 Double_t det_xGlassPos = 150; //!  x-size of Active Glass plates
 Double_t det_yGlassPos = 120; //!  y-size of Active Glass plates
-Double_t det_zGlassPos = 0.1; //!  z-size of Active Glass plates
+Double_t det_zGlassPos = 0.05; //!  z-size of Active Glass plates
 
 Double_t det_xFreonSF6Pos = 150;  //!  x-size of gas gap
 Double_t det_yFreonSF6Pos = 120;  //!  y-size of gas gap
@@ -61,7 +61,13 @@ Double_t det_xHePos = 177; // x-size of helium box
 Double_t det_yHePos = 131; // y-size of helium box
 Double_t det_zHePos = 100; // z-size of helium box
 
-void create_rpc_geo(const TString geoTag = "v2022.12")
+// New addition Steel plate
+
+Double_t det_xFePos = 177; // x-size of helium box
+Double_t det_yFePos = 131; // y-size of helium box
+Double_t det_zFePos = 1.5; // z-size of helium box
+
+void create_rpc_Fe_Glass_geo(const TString geoTag = "v2022.12")
 {
     // -------   Load media from media file   -----------------------------------
     FairGeoLoader* geoLoad = new FairGeoLoader("TGeo", "FairGeoLoader");
@@ -74,7 +80,7 @@ void create_rpc_geo(const TString geoTag = "v2022.12")
     // --------------------------------------------------------------------------
 
     // -------   Geometry file name (output)   ----------------------------------
-    TString geoFileName = geoPath + "/geometry/tof_rpc_";
+    TString geoFileName = geoPath + "/geometry/tof_rpc_Fe_He_Glass_";
     geoFileName = geoFileName + geoTag + ".geo.root";
     // --------------------------------------------------------------------------
 
@@ -165,13 +171,21 @@ void create_rpc_geo(const TString geoTag = "v2022.12")
     if (!pMed9)
         Fatal("Main", "Medium PbWO not found");
 
+    // Steel Plate
+    FairGeoMedium* Steel = geoMedia->getMedium("Steel");
+    if (!Steel)
+        Fatal("Main", "Medium Steel not found");
+    geoBuild->createMedium(Steel);
+    TGeoMedium* pMed10 = gGeoMan->GetMedium("Steel");
+    if (!pMed10)
+        Fatal("Main", "Medium Steel not found");
 
     // 
     // --------------------------------------------------------------------------
 
     // --------------   Create geometry and top volume  -------------------------
     gGeoMan = (TGeoManager*)gROOT->FindObject("FAIRGeom");
-    gGeoMan->SetName("RPC_TOFgeom");
+    gGeoMan->SetName("RPC_Fe_Glass_TOFgeom");
     TGeoVolume* top = new TGeoVolumeAssembly("TOP");
     gGeoMan->SetTopVolume(top);
     // --------------------------------------------------------------------------
@@ -190,7 +204,7 @@ void create_rpc_geo(const TString geoTag = "v2022.12")
 
     // Definition of the mother volume where the RPC voulumes are going to be
     // mounted
-    TGeoVolume* Rpc_module = gGeoManager->MakeBox("RPC", pMed0, xbox / 2.0, ybox / 2.0, zbox / 2.0);
+    TGeoVolume* Rpc_module = gGeoManager->MakeBox("RPC_Fe_Glass", pMed0, xbox / 2.0, ybox / 2.0, zbox / 2.0);
     // Rpc_module->SetLineColor(kRed);
 
     // Global positioning
@@ -198,64 +212,69 @@ void create_rpc_geo(const TString geoTag = "v2022.12")
 
     // RPC volumes
 
-    TGeoVolume* vol_al_F = gGeoManager->MakeBox("Al1", pMed1, det_xAlPos / 2.0, det_yAlPos / 2.0, det_zAlPos / 2.0);
+    TGeoVolume* vol_al_F = gGeoManager->MakeBox("Al1_Fe_Glass", pMed1, det_xAlPos / 2.0, det_yAlPos / 2.0, det_zAlPos / 2.0);
     vol_al_F->SetLineColor(kGray);
 
     TGeoVolume* vol_pmmaLat1 =
-        gGeoManager->MakeBox("pmmalat1", pMed7, det_latxPMMAPos / 2.0, det_latyPMMAPos / 2.0, det_latzPMMAPos / 2.0);
+        gGeoManager->MakeBox("pmmalat1_Fe_Glass", pMed7, det_latxPMMAPos / 2.0, det_latyPMMAPos / 2.0, det_latzPMMAPos / 2.0);
     vol_pmmaLat1->SetLineColor(kYellow);
 
     TGeoVolume* vol_pmmafront1 = gGeoManager->MakeBox(
-        "pmmafront1", pMed5, (det_frontdxPMMAPos) / 2.0, det_frontdyPMMAPos / 2.0, det_frontdzPMMAPos / 2.0);
+        "pmmafront1_Fe_Glass", pMed5, (det_frontdxPMMAPos) / 2.0, det_frontdyPMMAPos / 2.0, det_frontdzPMMAPos / 2.0);
     vol_pmmafront1->SetLineColor(kYellow);
 
     TGeoVolume* vol_pmmatop1 = gGeoManager->MakeBox(
-        "pmmatop1", pMed5, (det_topdxPMMAPos) / 2.0, det_topdyPMMAPos / 2.0, det_topdzPMMAPos / 2.0);
+        "pmmatop1_Fe_Glass", pMed5, (det_topdxPMMAPos) / 2.0, det_topdyPMMAPos / 2.0, det_topdzPMMAPos / 2.0);
     vol_pmmatop1->SetLineColor(kYellow);
 
     TGeoVolume* vol_glass =
-        gGeoManager->MakeBox("glass", pMed4, det_xGlassPos / 2.0, det_yGlassPos / 2.0, det_zGlassPos / 2.0);
+        gGeoManager->MakeBox("glass_Fe_Glass", pMed4, det_xGlassPos / 2.0, det_yGlassPos / 2.0, det_zGlassPos / 2.0);
     vol_glass->SetLineColor(kBlue);
 
-    TGeoVolume* vol_FR4 = gGeoManager->MakeBox("FR4", pMed6, det_xFR4Pos / 2.0, det_yFR4Pos / 2.0, det_zFR4Pos / 2.0);
+    TGeoVolume* vol_FR4 = gGeoManager->MakeBox("FR4_Fe_Glass", pMed6, det_xFR4Pos / 2.0, det_yFR4Pos / 2.0, det_zFR4Pos / 2.0);
     vol_FR4->SetLineColor(kBlack);
 
     TGeoVolume* Cu_plane =
-        gGeoManager->MakeBox("Cu_plane", pMed3, det_xGlassPos / 2.0, det_yGlassPos / 2.0, det_zStripPos / 2.0);
+        gGeoManager->MakeBox("Cu_plane_Fe_Glass", pMed3, det_xGlassPos / 2.0, det_yGlassPos / 2.0, det_zStripPos / 2.0);
     Cu_plane->SetLineColor(kBlack);
 
     TGeoVolume* vol_FrSF6 =
-        gGeoManager->MakeBox("gas1", pMed2, det_xFreonSF6Pos / 2.0, det_yFreonSF6Pos / 2.0, det_zFreonSF6Pos / 2.0);
+        gGeoManager->MakeBox("gas1_Fe_Glass", pMed2, det_xFreonSF6Pos / 2.0, det_yFreonSF6Pos / 2.0, det_zFreonSF6Pos / 2.0);
     vol_FrSF6->SetLineColor(kGreen);
 
     TGeoVolume* vol_strip =
-        gGeoManager->MakeBox("strip", pMed3, (det_xStripPos) / 2.0, (det_yStripPos) / 2.0, det_zStripPos / 2.0);
+        gGeoManager->MakeBox("strip_Fe_Glass", pMed3, (det_xStripPos) / 2.0, (det_yStripPos) / 2.0, det_zStripPos / 2.0);
     vol_strip->SetLineColor(42);
 
     // Volume diogo additions
     // Helium
 
     TGeoVolume* vol_He =
-        gGeoManager->MakeBox("helium_box", pMed8, (det_xHePos) / 2.0, (det_yHePos) / 2.0, det_zHePos / 2.0);
+        gGeoManager->MakeBox("helium_box_Fe_Glass", pMed8, (det_xHePos) / 2.0, (det_yHePos) / 2.0, det_zHePos / 2.0);
     vol_He->SetLineColor(kWhite);
     
     // PbWo
 
     TGeoVolume* vol_PbWo =
-        gGeoManager->MakeBox("lead_box", pMed9, (det_xHePos) / 2.0, (det_yHePos) / 2.0, det_zHePos / 2.0);
+        gGeoManager->MakeBox("lead_box_Fe_Glass", pMed9, (det_xHePos) / 2.0, (det_yHePos) / 2.0, det_zHePos / 2.0);
     vol_PbWo->SetLineColor(kBlack);
     
     // Vacuum
 
     TGeoVolume* vol_vac =
-        gGeoManager->MakeBox("vacuum_box", pMed7, (det_xHePos) / 2.0, (det_yHePos) / 2.0, det_zHePos / 2.0);
+        gGeoManager->MakeBox("vacuum_box_Fe_Glass", pMed7, (det_xHePos) / 2.0, (det_yHePos) / 2.0, det_zHePos / 2.0);
     vol_vac->SetLineColor(kGreen);
 
     // Air
 
     TGeoVolume* vol_air =
-        gGeoManager->MakeBox("vacuum_box", pMed0, (det_xHePos) / 2.0, (det_yHePos) / 2.0, det_zHePos / 2.0);
+        gGeoManager->MakeBox("air_box_Fe_Glass", pMed0, (det_xHePos) / 2.0, (det_yHePos) / 2.0, det_zHePos / 2.0);
     vol_air->SetLineColor(kGreen);
+
+    //Steel
+
+    TGeoVolume* vol_fe = 
+        gGeoManager->MakeBox("Steel_Fe_Glass", pMed10, (det_xFePos) / 2.0, (det_yFePos) / 2.0, det_zFePos / 2.0);
 
     // join everything
 
@@ -271,6 +290,10 @@ void create_rpc_geo(const TString geoTag = "v2022.12")
     // Air Box
     // Rpc_module->AddNode(vol_air, 1, new TGeoTranslation(0, 0, -(det_zHePos / 2.0)));
     // End Of Air Box
+
+    // Steel Plate
+    Rpc_module->AddNode(vol_fe, 1, new TGeoTranslation(0, 0, -(det_zFePos / 2.0)));
+    // End Of Steel Plate
 
     Rpc_module->AddNode(vol_al_F, 1, new TGeoTranslation(0, 0, (det_zAlPos / 2.0)));
     Rpc_module->AddNode(vol_FR4, 2, new TGeoTranslation(0, 0, det_zAlPos + (det_zFR4Pos / 2.0)));
@@ -356,7 +379,7 @@ void create_rpc_geo(const TString geoTag = "v2022.12")
 
     // This is just to add the helium box after the RPC
     
-    // zRpc_module->AddNode(vol_He, 1, new TGeoTranslation(0, 0, z + det_zFR4Pos + det_zAlPos + (det_zHePos / 2)));
+    Rpc_module->AddNode(vol_He, 1, new TGeoTranslation(0, 0, z + det_zFR4Pos + det_zAlPos + (det_zHePos / 2)));
     
     // Rpc_module->AddNode(vol_PbWo, 1, new TGeoTranslation(0, 0, 2 * det_zFR4Pos + ((25*z + det_frontdzPMMAPos + 0.2065)/ 2.0)));
 

@@ -25,19 +25,29 @@
 #include "TVirtualMC.h"
 
 R3BRpc::R3BRpc()
-    : R3BRpc("")
+    : R3BDetector() // R3BRpc("")
 {
 }
 
-R3BRpc::R3BRpc(const TString& geoFile, const TGeoTranslation& trans, const TGeoRotation& rot)
-    : R3BRpc(geoFile, { trans, rot })
+R3BRpc::R3BRpc(const TString& geoFile,
+               DetectorId type,
+               const TGeoTranslation& trans,
+               const TGeoRotation& rot,
+               const TString& namedetId)         
+    : R3BRpc(geoFile, type, { trans, rot }, namedetId)
 {
 }
 
-R3BRpc::R3BRpc(const TString& geoFile, const TGeoCombiTrans& combi)
-    : R3BDetector("R3BRpc", kRPC, geoFile, combi)
+R3BRpc::R3BRpc(const TString& geoFile,
+               DetectorId type,
+               const TGeoCombiTrans& combi,
+               const TString& namedetId)
+    : R3BDetector(namedetId == "NULL" ? "R3BRpc" : "R3BRpc" + namedetId, type, geoFile, combi)
+    // , fName(name)
     , fRpcCollection(new TClonesArray("R3BRpcPoint"))
     , fPosIndex(0)
+    , fDetId(type)
+    , fNameDetId(namedetId)
 {
     ResetParameters();
 }
@@ -55,8 +65,10 @@ void R3BRpc::Initialize()
 {
     FairDetector::Initialize();
 
-    R3BLOG(info, " ");
+    R3BLOG(info, " "); // R3BLOG(info, " ");
     R3BLOG(debug, "Vol. (McId) " << gMC->VolId("strip"));
+    
+
 }
 
 Bool_t R3BRpc::ProcessHits(FairVolume* vol)
@@ -90,7 +102,7 @@ Bool_t R3BRpc::ProcessHits(FairVolume* vol)
 
         if (fELoss == 0.)
             return kFALSE;
-
+        
         AddPoint(fTrackID,
                  fVolumeID,
                  fStripID,
@@ -101,9 +113,11 @@ Bool_t R3BRpc::ProcessHits(FairVolume* vol)
                  fELoss,
                  gMC->CurrentEvent());
 
+        
         // Increment number of RpcPoints for this track
         R3BStack* stack = dynamic_cast<R3BStack*>(gMC->GetStack());
-        stack->AddPoint(kRPC);
+        stack->AddPoint(fDetId);
+
         ResetParameters();
     }
     return kTRUE;
@@ -118,7 +132,20 @@ void R3BRpc::EndOfEvent()
     Reset();
 }
 
-void R3BRpc::Register() { FairRootManager::Instance()->Register("RpcPoint", GetName(), fRpcCollection, kTRUE); }
+void R3BRpc::Register()
+{
+    if (fDetId == kRPC1)
+    {
+        FairRootManager::Instance()->Register("Rpc" + fNameDetId + "Point", GetName(), fRpcCollection, kTRUE);
+    }
+    if (fDetId == kRPC2)
+    {
+        FairRootManager::Instance()->Register("Rpc" + fNameDetId + "Point", GetName(), fRpcCollection, kTRUE);
+    }
+    
+    
+    // FairRootManager::Instance()->Register("Rpc" + fNameDetId + "Point", GetName(), fRpcCollection, kTRUE);
+}
 
 TClonesArray* R3BRpc::GetCollection(Int_t iColl) const
 {

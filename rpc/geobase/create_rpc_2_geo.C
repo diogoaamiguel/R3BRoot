@@ -21,7 +21,7 @@ TGeoManager* gGeoMan = NULL;
 /** Detector parameters.*/
 Double_t det_xGlassPos = 150; //!  x-size of Active Glass plates
 Double_t det_yGlassPos = 120; //!  y-size of Active Glass plates
-Double_t det_zGlassPos = 0.1; //!  z-size of Active Glass plates
+Double_t det_zGlassPos = 0.05; //!  z-size of Active Glass plates, Before 0.1
 
 Double_t det_xFreonSF6Pos = 150;  //!  x-size of gas gap
 Double_t det_yFreonSF6Pos = 120;  //!  y-size of gas gap
@@ -74,7 +74,7 @@ void create_rpc_2_geo(const TString geoTag = "v2022.12")
     // --------------------------------------------------------------------------
 
     // -------   Geometry file name (output)   ----------------------------------
-    TString geoFileName = geoPath + "/geometry/tof_rpc_2_";
+    TString geoFileName = geoPath + "/geometry/tof_rpc_2_Glass_";
     geoFileName = geoFileName + geoTag + ".geo.root";
     // --------------------------------------------------------------------------
 
